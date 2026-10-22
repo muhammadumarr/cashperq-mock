@@ -1,16 +1,24 @@
 const express = require("express");
+
 const router = express.Router();
 
 router.post("/v1/redeem", (req, res) => {
+
     console.log("--------------------------------");
     console.log("Incoming Redemption Request");
     console.log("--------------------------------");
 
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+    console.log("Headers");
+    console.log(req.headers);
 
-    const institutionMnemonic = req.header("INSTITUTION-MNEMONIC");
-    const authorization = req.header("Authorization");
+    console.log("Body");
+    console.log(req.body);
+
+    const institutionMnemonic =
+        req.header("INSTITUTION-MNEMONIC");
+
+    const authorization =
+        req.header("Authorization");
 
     const {
         tenantId,
@@ -46,7 +54,7 @@ router.post("/v1/redeem", (req, res) => {
         });
 
     }
-    
+
     if (
         !tenantId ||
         !customerId ||
@@ -69,12 +77,45 @@ router.post("/v1/redeem", (req, res) => {
 
     }
 
+    // Example business validation
+    if (Number(redeemAmount) > 2500) {
+
+        return res.status(200).json({
+
+            responseCode: "101",
+
+            status: "FAILED",
+
+            responseObj: [],
+
+            responseMessage: "Insufficient Loyalty Points"
+
+        });
+
+    }
+
     return res.status(200).json({
-        status: "SUCCESS",
-        message: "Request received and parsed successfully",
-        receivedBody: req.body
+
+        responseCode: "000",
+
+        responseObj: [
+
+            {
+
+                rrn: "123456789012",
+
+                customerId: customerId,
+
+                redeemedValue: redeemAmount
+
+            }
+
+        ],
+
+        status: "SUCCESS"
+
     });
-    
+
 });
 
 module.exports = router;
