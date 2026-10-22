@@ -9,11 +9,36 @@ router.post("/v1/redeem", (req, res) => {
     console.log("Headers:", req.headers);
     console.log("Body:", req.body);
 
+    const institutionMnemonic = req.header("INSTITUTION-MNEMONIC");
+    const authorization = req.header("Authorization");
+
+    if (!authorization) {
+
+        return res.status(401).json({
+            responseCode: "401",
+            status: "UNAUTHORIZED"
+        });
+
+    }
+
+    if (!institutionMnemonic) {
+
+        return res.status(400).json({
+            responseCode: "400",
+            status: "FAILED",
+            message: "Missing Institution Mnemonic"
+        });
+
+    }
+
+    console.log("Headers validated successfully.");
+
     return res.status(200).json({
         status: "SUCCESS",
         message: "Request received and parsed successfully",
         receivedBody: req.body
     });
+    
 });
 
 module.exports = router;
